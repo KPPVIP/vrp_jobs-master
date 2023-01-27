@@ -1,0 +1,135 @@
+THESES SCRIPTS IS USING MY NOTIFY, THAT IS RELEASED ON MY GITHUB
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Put this code on any client side .lua script at vRP paste
+----------------------------------------------------------------------------------------------------------------------------------------
+function tvRP.CarregarObjeto(dict,anim,prop,flag,mao,altura,pos1,pos2,pos3,pos4,pos5,tipo)
+    local ped = PlayerPedId()
+
+    RequestModel(GetHashKey(prop))
+    while not HasModelLoaded(GetHashKey(prop)) do
+        Citizen.Wait(10)
+    end
+
+    if altura then
+        tvRP.CarregarAnim(dict)
+        TaskPlayAnim(ped,dict,anim,3.0,3.0,-1,flag,0,0,0,0)
+        local coords = GetOffsetFromEntityInWorldCoords(ped,0.0,0.0,-5.0)
+        object = CreateObject(GetHashKey(prop),coords.x,coords.y,coords.z,true,true,true)
+        SetEntityCollision(object,false,false)
+        if tipo == 1 then
+            AttachEntityToEntity(object,ped,GetEntityBoneIndexByName(ped,mao),altura,pos1,pos2,pos3,pos4,pos5,true,false,false,true,1,true)
+            FreezeEntityPosition(object,true)
+        elseif tipo == 2 then
+            AttachEntityToEntity(object,ped,GetPedBoneIndex(ped,mao),altura,pos1,pos2,pos3,pos4,pos5,true,false,false,true,1,true)
+            FreezeEntityPosition(object,true)
+        end
+    else
+        tvRP.CarregarAnim(dict)
+        TaskPlayAnim(ped,dict,anim,3.0,3.0,-1,flag,0,0,0,0)
+        local coords = GetOffsetFromEntityInWorldCoords(ped,0.0,0.0,-5.0)
+        object = CreateObject(GetHashKey(prop),coords.x,coords.y,coords.z,true,true,true)
+        SetEntityCollision(object,false,false)
+        AttachEntityToEntity(object,ped,GetPedBoneIndex(ped,mao),0.0,0.0,0.0,0.0,0.0,0.0,false,false,false,false,2,true)
+    end
+    SetEntityAsMissionEntity(object,true,true)
+end
+
+function tvRP.DeletarObjeto()
+	tvRP.stopAnim(true)
+	TriggerEvent("binoculos")
+	if DoesEntityExist(object) then
+		DetachEntity(object,false,false)
+		TriggerServerEvent("trydeleteobj",ObjToNet(object))
+		object = nil
+	end
+end
+
+function tvRP.CarregarAnim(dict)
+	RequestAnimDict(dict)
+	while not HasAnimDictLoaded(dict) do
+		Citizen.Wait(10)
+	end
+end
+
+RegisterNetEvent("syncdeleteobj")
+AddEventHandler("syncdeleteobj",function(index)
+	Citizen.CreateThread(function()
+		if NetworkDoesNetworkIdExist(index) then
+			SetEntityAsMissionEntity(index,true,true)
+			SetObjectAsNoLongerNeeded(index)
+			local v = NetToObj(index)
+			if DoesEntityExist(v) then
+				DetachEntity(v,false,false)
+				PlaceObjectOnGroundProperly(v)
+				SetEntityAsNoLongerNeeded(v)
+				SetEntityAsMissionEntity(v,true,true)
+				DeleteObject(v)
+			end
+		end
+	end)
+end)
+
+local cancelando = false
+RegisterNetEvent('cancelando')
+AddEventHandler('cancelando',function(status)
+	cancelando = status
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(1)
+		if cancelando then
+			BlockWeaponWheelThisFrame()
+			DisableControlAction(0,288,true)
+			DisableControlAction(0,289,true)
+			DisableControlAction(0,170,true)
+			DisableControlAction(0,166,true)
+			DisableControlAction(0,187,true)
+			DisableControlAction(0,189,true)
+			DisableControlAction(0,190,true)
+			DisableControlAction(0,188,true)
+			DisableControlAction(0,57,true)
+			DisableControlAction(0,73,true)
+			DisableControlAction(0,167,true)
+			DisableControlAction(0,311,true)
+			DisableControlAction(0,344,true)
+			DisableControlAction(0,29,true)
+			DisableControlAction(0,182,true)
+			DisableControlAction(0,245,true)
+			DisableControlAction(0,257,true)
+			DisableControlAction(0,47,true)
+			DisableControlAction(0,38,true)
+		end
+	end
+end)
+----------------------------------------------------------------------------------------------------------------------------------------
+And put this code on any server side .lua script
+----------------------------------------------------------------------------------------------------------------------------------------
+RegisterServerEvent("trydeleteobj")
+AddEventHandler("trydeleteobj",function(index)
+	TriggerClientEvent("syncdeleteobj",-1,index)
+end)
+----------------------------------------------------------------------------------------------------------------------------------------
+ATM Blips for the Gruppe6 Job 
+----------------------------------------------------------------------------------------------------------------------------------------
+{ 119.10,-883.70,31.12,162,25,"Caixa Eletronico",0.4 },
+	{ -1315.80,-834.76,16.96,162,25,"Caixa Eletronico",0.4 },
+	{ 285.44,143.38,104.17,162,25,"Caixa Eletronico",0.4 },
+	{ 1138.23,-468.89,66.73,162,25,"Caixa Eletronico",0.4 },
+	{ 1077.70,-776.54,58.24,162,25,"Caixa Eletronico",0.4 },
+	{ -710.03,-818.90,23.72,162,25,"Caixa Eletronico",0.4 },
+	{ -821.63,-1081.89,11.13,162,25,"Caixa Eletronico",0.4 },
+	{ -1409.75,-100.44,52.38,162,25,"Caixa Eletronico",0.4 },
+	{ -846.29,-341.28,38.68,162,25,"Caixa Eletronico",0.4 },
+	{ -2072.36,-317.23,13.31,162,25,"Caixa Eletronico",0.4 },
+	{ -526.64,-1222.97,18.45,162,25,"Caixa Eletronico",0.4 },
+	{ -254.41,-692.46,33.60,162,25,"Caixa Eletronico",0.4 },
+	{ -203.69,-861.47,30.26,162,25,"Caixa Eletronico",0.4 },
+	{ -303.30,-829.81,32.41,162,25,"Caixa Eletronico",0.4 },
+	{ -301.72,-830.03,32.41,162,25,"Caixa Eletronico",0.4 },
+	{ 146.05,-1035.03,29.34,162,25,"Caixa Eletronico",0.4 },
+	{ 147.66,-1035.67,29.34,162,25,"Caixa Eletronico",0.4 },
+	{ -258.80,-723.40,33.46,162,25,"Caixa Eletronico",0.4 },
+	{ -256.15,-716.00,33.51,162,25,"Caixa Eletronico",0.4 },
+	{ -537.85,-854.37,29.28,162,25,"Caixa Eletronico",0.4 },
